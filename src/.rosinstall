@@ -1,0 +1,9 @@
+- git:
+    local-name: gps_msgs
+    uri: https://github.com/GAVLab/gps-msgs.git
+- git:
+    local-name: novatel
+    uri: https://github.com/GAVLab/novatel.git
+- git:
+    local-name: serial
+    uri: https://github.com/wjwwood/serial.git
