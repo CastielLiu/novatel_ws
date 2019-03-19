@@ -174,3 +174,7 @@ if (NOVATEL_BUILD_TESTS)
 
     add_test(AllTestsIntest_novatel novatel_tests)
 endif (NOVATEL_BUILD_TESTS)
+
+add_executable(recordTofile src/recordTofile.cpp)
+add_dependencies(recordTofile ${catkin_EXPORTED_TARGETS})
+target_link_libraries(recordTofile  ${catkin_LIBRARIES} )
