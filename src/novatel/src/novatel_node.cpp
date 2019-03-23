@@ -92,7 +92,7 @@ public:
     // gps_.set_raw_msg_callback(boost::bind(&NovatelNode::RawMsgHandler, this, _1));
     gps_.set_best_pseudorange_position_callback(boost::bind(&NovatelNode::PsrPosHandler, this, _1, _2));
     
-    gps_.set_inspvax_callback(boost::bind(&NovatelNode::InspvaxHandler,this,_1,_2));
+    gps_.set_inspvax_callback(boost::bind(&NovatelNode::InspvaxHandler,this,_1,_2)); //add by wendao
 
   }
 
@@ -659,10 +659,11 @@ protected:
     nh_.param("psrpos_topic", psrpos_topic_, std::string("gps_fix_psr"));
     ROS_INFO_STREAM(name_ << ": Pseudorange Position Topic: " << psrpos_topic_);
 
-// add by wendao 
+
     nh_.param("ecefpos_topic", ecefpos_topic_, std::string("gps_fix_ecef"));
     ROS_INFO_STREAM(name_ << ": ECEF Position Topic: " << ecefpos_topic_);
-    
+
+// add by wendao     
     nh_.param("inspvax_topic", inspvax_topic_, std::string("gps_inspvax"));
     ROS_INFO_STREAM(name_ << ": GPS Inspvax Topic: " << inspvax_topic_);
 
