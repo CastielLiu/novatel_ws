@@ -40,6 +40,7 @@ add_message_files(
         ENURpvData.msg
         Rpv.msg
         Inspvax.msg  #add by wendao
+        Utm.msg   #add by wendao
 )
 
 ## Generate services in the 'srv' folder
