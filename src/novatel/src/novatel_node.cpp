@@ -608,7 +608,7 @@ protected:
   void disconnect() {
     //em_.stopReading();
     //em_.disconnect();
-    gps_.SendCommand("UNLOGALL");
+    gps_.SendCommand("UNLOGALL THISPORT");
   }
 
   bool getParameters() {

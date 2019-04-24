@@ -241,7 +241,7 @@ bool Novatel::Connect_(std::string port, int baudrate=115200) {
 		}
 
 		// stop any incoming data and flush buffers
-		serial_port_->write("UNLOGALL\r\n");
+		serial_port_->write("UNLOGALL THISPORT\r\n");
 		// wait for data to stop cominig in
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		// clear serial port buffers
@@ -278,7 +278,7 @@ void Novatel::Disconnect() {
 	try {
 		if ((serial_port_!=NULL) && (serial_port_->isOpen()) ) {
 			log_info_("Sending UNLOGALL and closing port.");
-			serial_port_->write("UNLOGALL\r\n");
+			serial_port_->write("UNLOGALL THISPORT\r\n");
 			serial_port_->close();
 			delete serial_port_;
 			serial_port_=NULL;
