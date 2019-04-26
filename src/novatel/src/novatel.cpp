@@ -53,9 +53,6 @@ unsigned long CalculateBlockCRC32 ( unsigned long ulCount, /* Number of bytes in
 }
 
 
-
-
-
 /*!
  * Default callback method for timestamping data.  Used if a
  * user callback is not set.  Returns the current time from the

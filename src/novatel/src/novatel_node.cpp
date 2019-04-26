@@ -713,7 +713,7 @@ protected:
   std::string dual_band_range_topic_;
   std::string psrpos_topic_;
   std::string ecefpos_topic_;
-  std::string inspvax_topic_;  //add by wendao 
+  std::string inspvax_topic_; //add by wendao 
   std::string corr_imu_topic_; //add by wendao
 
   std::string port_;
