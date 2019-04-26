@@ -278,7 +278,7 @@ void Novatel::Disconnect() {
 	try {
 		if ((serial_port_!=NULL) && (serial_port_->isOpen()) ) {
 			log_info_("Sending UNLOGALL and closing port.");
-			serial_port_->write("UNLOGALL\r\n");
+			serial_port_->write("UNLOGALL THISPORT\r\n");
 			serial_port_->close();
 			delete serial_port_;
 			serial_port_=NULL;
