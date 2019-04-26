@@ -241,7 +241,7 @@ bool Novatel::Connect_(std::string port, int baudrate=115200) {
 		}
 
 		// stop any incoming data and flush buffers
-		serial_port_->write("UNLOGALL\r\n");
+		serial_port_->write("UNLOGALL THISPORT\r\n");
 		// wait for data to stop cominig in
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		// clear serial port buffers
@@ -1217,13 +1217,20 @@ void Novatel::ParseBinary(unsigned char *message, size_t length, BINARY_LOG_TYPE
             if (ins_position_velocity_attitude_short_callback_)
             	ins_position_velocity_attitude_short_callback_(ins_pva_short, read_timestamp_);
             break;
-        //add by wendao 
+        //add by wendao  begin
         case INSPVAX_LOG_TYPE:
             Inspvax inspvax;
             memcpy(&inspvax, message, sizeof(inspvax));
             if (inspvax_callback_)
             	inspvax_callback_(inspvax, read_timestamp_);
             break;
+        case CORRIMUDATA_LOG_TYPE:
+        	CorrImu corr_imu;
+        	memcpy(&corr_imu,message,sizeof(corr_imu));
+        	if(corrImu_callback_)
+        		corrImu_callback_(corr_imu,read_timestamp_);
+        	break;
+        //end	
             
         case VEHICLEBODYROTATION_LOG_TYPE:
             VehicleBodyRotation vehicle_body_rotation;

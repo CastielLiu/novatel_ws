@@ -21,6 +21,6 @@
 		<param name="odom_topic" value = "/gps_odom" />
 		
 	</node>
-
+	
 </launch>
 

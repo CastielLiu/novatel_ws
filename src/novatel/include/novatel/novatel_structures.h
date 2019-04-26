@@ -645,6 +645,24 @@ struct Inspvax
     uint8_t crc[4];						//!< 32-bit cyclic redundancy check (CRC)
 });
 
+PACK(
+struct CorrImu
+{
+	Oem4BinaryHeader header;
+	unsigned long week;
+	double seconds;
+	double pitch_rate;
+	double roll_rate;
+	double yaw_rate;
+	double lateral_acc;
+	double longitudinal_acc;
+	double verticle_acc;
+	uint8_t crc[4];	
+});
+
+
+
+
 /*!
  * IONUTC Message Structure
  * This log contains The Ionospheric Model

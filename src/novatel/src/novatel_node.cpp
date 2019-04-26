@@ -45,6 +45,7 @@
 #include "gps_msgs/Ephemeris.h"
 #include "gps_msgs/L1L2Range.h"
 #include "gps_msgs/Inspvax.h"   //add by wendao
+#include "sensor_msgs/Imu.h"
 
 #include <boost/tokenizer.hpp>
 #include <boost/thread/thread.hpp>
@@ -93,6 +94,7 @@ public:
     gps_.set_best_pseudorange_position_callback(boost::bind(&NovatelNode::PsrPosHandler, this, _1, _2));
     
     gps_.set_inspvax_callback(boost::bind(&NovatelNode::InspvaxHandler,this,_1,_2)); //add by wendao
+    gps_.set_corrImu_callback(boost::bind(&NovatelNode::CorrImuHandler,this,_1,_2)); //add by wendao
 
   }
 
@@ -474,7 +476,7 @@ public:
   {
 	gps_msgs::Inspvax inspvax_msg;
 	inspvax_msg.header.stamp = ros::Time::now();
-	inspvax_msg.header.frame_id = "/gps";
+	inspvax_msg.header.frame_id = "gps";
 	inspvax_msg.latitude = inspvax.latitude;
 	inspvax_msg.longitude = inspvax.longitude;
 	inspvax_msg.height = inspvax.height;
@@ -498,6 +500,20 @@ public:
 	inspvax_publisher_.publish(inspvax_msg);
 	
   }
+  void CorrImuHandler(CorrImu &corr_imu,double timestamp)
+  {
+  	sensor_msgs::Imu corr_imu_msg;
+  	corr_imu_msg.header.stamp = ros::Time::now();
+  	corr_imu_msg.header.frame_id = "imu";
+  	corr_imu_msg.angular_velocity.x = corr_imu.pitch_rate;
+  	corr_imu_msg.angular_velocity.y = corr_imu.roll_rate;
+  	corr_imu_msg.angular_velocity.z = corr_imu.yaw_rate;
+  	
+  	corr_imu_msg.linear_acceleration.x = corr_imu.lateral_acc;
+  	corr_imu_msg.linear_acceleration.y = corr_imu.longitudinal_acc;
+  	corr_imu_msg.linear_acceleration.z = corr_imu.verticle_acc;
+  	corrImu_publisher_.publish(corr_imu_msg);
+  }
 
 
   void run() {
@@ -513,6 +529,7 @@ public:
     this->psrpos_publisher_ = nh_.advertise<sensor_msgs::NavSatFix>(psrpos_topic_,0);
     this->ecefpos_publisher_ = nh_.advertise<nav_msgs::Odometry>(ecefpos_topic_,0);
     this->inspvax_publisher_ = nh_.advertise<gps_msgs::Inspvax>(inspvax_topic_,0); //add by wendao
+    this->corrImu_publisher_ = nh_.advertise<sensor_msgs::Imu>(corr_imu_topic_,0); //add by wendao
 
     //em_.setDataCallback(boost::bind(&EM61Node::HandleEmData, this, _1));
     gps_.Connect(port_,baudrate_);
@@ -608,7 +625,7 @@ protected:
   void disconnect() {
     //em_.stopReading();
     //em_.disconnect();
-    gps_.SendCommand("UNLOGALL");
+    gps_.SendCommand("UNLOGALL THISPORT");
   }
 
   bool getParameters() {
@@ -630,7 +647,7 @@ protected:
     nh_.param("port", port_, std::string("/dev/ttyUSB0"));
     ROS_INFO_STREAM(name_ << ": Port: " << port_);
 
-    nh_.param("baudrate", baudrate_, 9600);
+    nh_.param("baudrate", baudrate_, 115200);
     ROS_INFO_STREAM(name_ << ": Baudrate: " << baudrate_);
 
     //nh_.param("log_commands", log_commands_, std::string("BESTUTMB ONTIME 1.0"));
@@ -667,6 +684,9 @@ protected:
     nh_.param("inspvax_topic", inspvax_topic_, std::string("gps_inspvax"));
     ROS_INFO_STREAM(name_ << ": GPS Inspvax Topic: " << inspvax_topic_);
 
+	nh_.param("corr_imu_topic",corr_imu_topic_,std::string("/imu"));
+	ROS_INFO_STREAM(name_ << ": GPS Imu Topic: " << corr_imu_topic_);
+	
     return true;
   }
 
@@ -682,6 +702,7 @@ protected:
   ros::Publisher psrpos_publisher_;
   ros::Publisher ecefpos_publisher_;
   ros::Publisher inspvax_publisher_;  //add by wendao
+  ros::Publisher corrImu_publisher_;  //add by wendao
 
   Novatel gps_; //
 
@@ -693,6 +714,7 @@ protected:
   std::string psrpos_topic_;
   std::string ecefpos_topic_;
   std::string inspvax_topic_;  //add by wendao 
+  std::string corr_imu_topic_; //add by wendao
 
   std::string port_;
   std::string log_commands_;

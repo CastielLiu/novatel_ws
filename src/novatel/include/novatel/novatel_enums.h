@@ -395,7 +395,8 @@ enum BINARY_LOG_TYPE
   RAWIMUS_LOG_TYPE = 325,
   VEHICLEBODYROTATION_LOG_TYPE = 642,
   INSPVAX_LOG_TYPE = 1465,   //add by wendao
-  BESTGNSSPOS_LOG_TYPE = 1429  //add by wendao
+  BESTGNSSPOS_LOG_TYPE = 1429,  //add by wendao
+  CORRIMUDATA_LOG_TYPE = 812, //add by wendao
   							
 };
 typedef enum BINARY_LOG_TYPE BINARY_LOG_TYPE;
