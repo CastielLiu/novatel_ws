@@ -646,9 +646,9 @@ struct Inspvax
 });
 
 PACK(
-struct CorrImu
+struct CorrImuShort
 {
-	Oem4BinaryHeader header;
+	OEM4ShortBinaryHeader header;
 	unsigned long week;
 	double seconds;
 	double pitch_rate;
@@ -657,10 +657,10 @@ struct CorrImu
 	double lateral_acc;
 	double longitudinal_acc;
 	double verticle_acc;
-	uint8_t crc[4];	
+	uint8_t crc[4];
 });
 
-
+//add by wendao  end
 
 
 /*!

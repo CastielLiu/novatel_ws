@@ -1221,11 +1221,11 @@ void Novatel::ParseBinary(unsigned char *message, size_t length, BINARY_LOG_TYPE
             if (inspvax_callback_)
             	inspvax_callback_(inspvax, read_timestamp_);
             break;
-        case CORRIMUDATA_LOG_TYPE:
-        	CorrImu corr_imu;
+        case CORRIMUDATAS_LOG_TYPE:
+        	CorrImuShort corr_imu;
         	memcpy(&corr_imu,message,sizeof(corr_imu));
-        	if(corrImu_callback_)
-        		corrImu_callback_(corr_imu,read_timestamp_);
+        	if(corrImu_short_callback_)
+        		corrImu_short_callback_(corr_imu,read_timestamp_);
         	break;
         //end	
             
