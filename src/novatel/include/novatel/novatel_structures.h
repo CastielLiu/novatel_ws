@@ -136,7 +136,7 @@ struct OEM4ShortBinaryHeader
 {
    uint8_t          sync1;          //!< start of packet first byte (0xAA)
    uint8_t          sync2;          //!< start of packet second byte (0x44)
-   uint8_t          sync3;          //!< start of packet third  byte (0x12)
+   uint8_t          sync3;          //!< start of packet third  byte (0x13)          0x13!!
    uint8_t          message_length; //!< Message length (Not including header or CRC)
    uint16_t         message_id;     //!< Message ID number
    uint16_t         gps_week;       //!< GPS Week number
