@@ -41,6 +41,8 @@ add_message_files(
         Rpv.msg
         Inspvax.msg  #add by wendao
         Utm.msg   #add by wendao
+        Satellite.msg
+        Satellites.msg
 )
 
 ## Generate services in the 'srv' folder
