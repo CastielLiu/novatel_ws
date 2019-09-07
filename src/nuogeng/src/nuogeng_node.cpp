@@ -51,7 +51,7 @@ bool Nuogeng::init(int argc,char** argv)
 	ros::NodeHandle nh;
 	ros::NodeHandle nh_private("~");
 	
-	m_pub_id20 = nh.advertise<gps_msgs::Inspvax>(nh_private.param<std::string>("location_topic","/gps"),1);
+	m_pub_id20 = nh.advertise<gps_msgs::Inspvax>(nh_private.param<std::string>("gps_topic","/gps"),1);
 	m_pub_id31 = nh.advertise<gps_msgs::Satellites>(nh_private.param<string>("satellite_topic","/satellite"),1);
 	std::string port_name = nh_private.param<std::string>("port_name","/dev/ttyUSB0");
 	int baudrate = nh_private.param<int>("baudrate",115200);
@@ -217,8 +217,12 @@ void Nuogeng::stopReading()
 int main(int argc,char** argv)
 {
 	Nuogeng gps;
-	gps.init(argc,argv);
-	gps.startReading();
+	if(gps.init(argc,argv))
+	{
+		gps.startReading();
+		ROS_INFO("%s initial ok...",ros::this_node::getName().c_str());
+	}
+	
 	ros::spin();
 }
 

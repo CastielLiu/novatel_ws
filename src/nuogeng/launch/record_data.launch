@@ -1,0 +1,12 @@
+<!-- -->
+
+<launch>
+	<node name="nuogeng_node" pkg="nuogeng" type="nuogeng_node" output="screen">
+	</node>
+	
+	<node name="record_data_node" pkg="nuogeng" type="record_data_node" output="screen">
+		<param name="record_duration" value="1.0"/>  <!-- s -->
+		<param name="satellite_file" value="$(find nuogeng)/data/satellite.txt"/>
+		<param name="gps_file" value="$(find nuogeng)/data/gps.txt"/>
+	</node>
+</launch>
