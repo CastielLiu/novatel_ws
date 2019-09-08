@@ -141,6 +141,7 @@ target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
 add_executable(record_data_node src/record_data.cpp)
 add_dependencies(record_data_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(record_data_node ${catkin_LIBRARIES})
+target_link_libraries(record_data_node ${catkin_LIBRARIES} )
+target_link_libraries(record_data_node /opt/ros/kinetic/lib/libmessage_filters.so)
 
 

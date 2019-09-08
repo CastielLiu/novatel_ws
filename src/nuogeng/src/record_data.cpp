@@ -7,12 +7,17 @@
 #include"gps_msgs/Inspvax.h"
 #include"gps_msgs/Satellite.h"
 #include"gps_msgs/Satellites.h"
+#include<message_filters/subscriber.h>
+#include<message_filters/time_synchronizer.h>
+#include<message_filters/sync_policies/approximate_time.h>
+
 
 using namespace std;
 
 class Recorder
 {
 public:
+	typedef message_filters::sync_policies::ApproximateTime<gps_msgs::Inspvax,gps_msgs::Satellites> MySyncPolicy;
 	Recorder(){}
 	~Recorder()
 	{
@@ -49,7 +54,26 @@ public:
 		}
 		mOutFileSatellite << "--------------------------\r\n";
 		ROS_INFO("%5ld: recording...",++count);
+	}
+	
+	void record_callback(const gps_msgs::Inspvax::ConstPtr& gpsMsg, const gps_msgs::Satellites::ConstPtr& satellite)
+	{
+		static size_t count = 0;
+		mOutFileInspvax << fixed << setprecision(7)
+						<< gpsMsg->latitude << "\t" << gpsMsg->longitude << "\t"
+						<< setprecision(2)
+						<< gpsMsg->azimuth << "\t" << gpsMsg->height <<"\r\n";
 						
+		for(auto& satellite:mSatellites.satellites)
+		{
+			mOutFileSatellite << setw(6)
+			 				  << int(satellite.navigation_system) << "\t" << int(satellite.satellite_num) << "\t"
+							  << int(satellite.satellite_frequency) << "\t" << int(satellite.elevation) << "\t"
+							  << int(satellite.azimuth) << "\t" << int(satellite.snr) << "\r\n";
+		}
+		mOutFileSatellite << "--------------------------\r\n";
+		ROS_INFO("%5ld: recording...",++count);
+	
 	}
 	
 	bool init(int argc,char** argv)
@@ -58,11 +82,23 @@ public:
 		ros::NodeHandle nh;
 		ros::NodeHandle nh_private("~");
 		
-		mSubGpsMsg = nh.subscribe(nh_private.param<string>("gps_topic","/gps"),1, &Recorder::gps_callback,this);
+		std::string gps_topic = nh_private.param<string>("gps_topic","/gps");
+		std::string satellite_topic = nh_private.param<string>("satellite_topic","/satellite");
 		
-		mSubSatelliteMsg = nh.subscribe(nh_private.param<string>("satellite_topic","/satellite"),1, &Recorder::satellite_callback, this);
-		
-		mTimer = nh.createTimer(ros::Duration(nh_private.param<float>("record_duration",1.0)),&Recorder::timer_callback, this);
+		bool use_synchronizer = nh_private.param<bool>("use_synchronizer",true);
+		if(!use_synchronizer)
+		{
+			mSubGpsMsg = nh.subscribe(gps_topic, 1, &Recorder::gps_callback,this);
+			mSubSatelliteMsg = nh.subscribe(satellite_topic ,1, &Recorder::satellite_callback, this);
+			mTimer = nh.createTimer(ros::Duration(nh_private.param<float>("record_duration",1.0)),&Recorder::timer_callback, this);
+		}
+		else
+		{
+			mSubGpsPtr.reset(new message_filters::Subscriber<gps_msgs::Inspvax>(nh,gps_topic,50));
+			mSubSatellitePtr.reset(new message_filters::Subscriber<gps_msgs::Satellites>(nh,satellite_topic,1));
+			mSyncPtr.reset(new message_filters::Synchronizer<MySyncPolicy>(MySyncPolicy(50),*mSubGpsPtr,*mSubSatellitePtr));
+			mSyncPtr->registerCallback(boost::bind(&Recorder::record_callback, this, _1, _2));
+		}
 		
 		string file_name1 = nh_private.param<string>("satellite_file", "satellite.txt");
 		string file_name2 = nh_private.param<string>("gps_file", "gps.txt");
@@ -95,6 +131,11 @@ public:
 private:
 	ros::Subscriber mSubGpsMsg;
 	ros::Subscriber mSubSatelliteMsg;
+	
+	std::unique_ptr<message_filters::Subscriber<gps_msgs::Inspvax> > mSubGpsPtr;
+	std::unique_ptr<message_filters::Subscriber<gps_msgs::Satellites> > mSubSatellitePtr;
+	std::unique_ptr<message_filters::Synchronizer<MySyncPolicy> >mSyncPtr;
+	
 	ros::Timer mTimer;
 	gps_msgs::Inspvax mInspvaxMsg;
 	gps_msgs::Satellites mSatellites;
