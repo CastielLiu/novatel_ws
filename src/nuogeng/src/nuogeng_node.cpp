@@ -191,6 +191,7 @@ void Nuogeng::parseId31Pkg(const uint8_t* buffer)
 	satellites.header.stamp = ros::Time::now();
 	satellites.header.frame_id = "gps";
 	satellites.satellites.resize(satellite_count);
+	satellites.count = satellite_count;
 	
 	for(int i=0; i<satellite_count; ++i)
 	{

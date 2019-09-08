@@ -39,12 +39,16 @@ public:
 	
 	void timer_callback(const ros::TimerEvent&)
 	{
+		double gps_time = mInspvaxMsg.header.stamp.toSec();
+		double satellite_time = mSatellites.header.stamp.toSec();
+		
 		static size_t count = 0;
-		mOutFileInspvax << fixed << setprecision(7)
+		mOutFileInspvax << fixed << setprecision(3) << gps_time << "\t" << setprecision(7)
 						<< mInspvaxMsg.latitude << "\t" << mInspvaxMsg.longitude << "\t"
 						<< setprecision(2)
 						<< mInspvaxMsg.azimuth << "\t" << mInspvaxMsg.height <<"\r\n";
-						
+		
+		mOutFileSatellite << fixed << setprecision(3) << satellite_time  << "\r\n";
 		for(auto& satellite:mSatellites.satellites)
 		{
 			mOutFileSatellite << setw(6)
@@ -56,15 +60,19 @@ public:
 		ROS_INFO("%5ld: recording...",++count);
 	}
 	
-	void record_callback(const gps_msgs::Inspvax::ConstPtr& gpsMsg, const gps_msgs::Satellites::ConstPtr& satellite)
+	void record_callback(const gps_msgs::Inspvax::ConstPtr& gpsMsg, const gps_msgs::Satellites::ConstPtr& satelliteMSg)
 	{
+		double gps_time = gpsMsg->header.stamp.toSec();
+		double satellite_time = satelliteMSg->header.stamp.toSec();
+		
 		static size_t count = 0;
-		mOutFileInspvax << fixed << setprecision(7)
+		mOutFileInspvax << fixed << setprecision(3) << gps_time << "\t" << setprecision(7)
 						<< gpsMsg->latitude << "\t" << gpsMsg->longitude << "\t"
 						<< setprecision(2)
 						<< gpsMsg->azimuth << "\t" << gpsMsg->height <<"\r\n";
-						
-		for(auto& satellite:mSatellites.satellites)
+		
+		mOutFileSatellite << fixed << setprecision(3) << satellite_time  << "\r\n";
+		for(auto& satellite:satelliteMSg->satellites)
 		{
 			mOutFileSatellite << setw(6)
 			 				  << int(satellite.navigation_system) << "\t" << int(satellite.satellite_num) << "\t"
@@ -121,8 +129,8 @@ public:
 		ROS_INFO("open %s and %s ok ...",file_name1.c_str(),file_name2.c_str());
 		
 			
-		mOutFileInspvax << "latitude\t" << "longitude\t" <<"yaw\t" << "height\r\n";
-		mOutFileSatellite << "navigation_system\t" << "satellite_num\t" << "satellite_frequency\t" << "elevation\t" << "azimuth\t" << "snr\r\n"; 
+		mOutFileInspvax << "stamp\t" << "latitude\t" << "longitude\t" <<"yaw\t" << "height\r\n";
+		mOutFileSatellite << "stamp\t" <<  "navigation_system\t" << "satellite_num\t" << "satellite_frequency\t" << "elevation\t" << "azimuth\t" << "snr\r\n"; 
 		return true;
 	}
 
