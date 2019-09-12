@@ -475,6 +475,7 @@ private:
 	unsigned char data_buffer_[MAX_NOUT_SIZE];	//!< data currently being buffered to read
 	unsigned char* data_read_;		//!< used only in BufferIncomingData - declared here for speed
 	size_t bytes_remaining_;	//!< bytes remaining to be read in the current message
+	size_t short_message_length_;
 	size_t buffer_index_;		//!< index into data_buffer_
 	size_t header_length_;	//!< length of the current header being read
 	bool reading_acknowledgement_;	//!< true if an acknowledgement is being received
@@ -508,6 +509,8 @@ private:
 	bool rtk_capable_; //!< Can the receiver compute RT2 and/or RT20 positions?
 	bool glonass_capable_; //!< Can the receiver receive GLONASS frequencies?
 	bool span_capable_;  //!< Is the receiver a SPAN unit?
+	
+	bool is_short_header;
 
 
 };

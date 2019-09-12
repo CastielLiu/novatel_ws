@@ -44,7 +44,7 @@
 
 namespace novatel {
 
-#define MAX_NOUT_SIZE 8192 // Maximum size of a NovAtel log buffer (ALMANACA logs are big!)
+#define MAX_NOUT_SIZE 300  // Maximum size of a NovAtel log buffer (ALMANACA logs are big! 8192)
 #define EPH_CHAN 33
 #define NUMSAT 14
 #define MAX_CHAN	54  // Maximum number of signal channels
@@ -68,6 +68,8 @@ namespace novatel {
 #define NOVATEL_SYNC_BYTE_1 0xAA
 #define NOVATEL_SYNC_BYTE_2 0x44
 #define NOVATEL_SYNC_BYTE_3 0x12
+#define NOVATEL_SHORT_SYNC_BYTE_3 0x13
+
 #define NOVATEL_ACK_BYTE_1 '<'
 #define NOVATEL_ACK_BYTE_2 'O'
 #define NOVATEL_ACK_BYTE_3 'K'
@@ -649,7 +651,7 @@ PACK(
 struct CorrImuShort
 {
 	OEM4ShortBinaryHeader header;
-	unsigned long week;
+	unsigned int week;
 	double seconds;
 	double pitch_rate;
 	double roll_rate;
