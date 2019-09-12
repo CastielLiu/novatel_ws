@@ -2,6 +2,11 @@
 
 <launch>
 	<node name="nuogeng_node" pkg="nuogeng" type="nuogeng_node" output="screen">
+		<param name="port_name" value="/dev/ttyUSB0"/>
+	</node>
+	
+	<node name="satellite_node" pkg="nuogeng" type="satellite_node" output="screen">
+		<param name="port_name" value="/dev/ttyUSB1"/>
 	</node>
 	
 	<node name="record_data_node" pkg="nuogeng" type="record_data_node" output="screen">

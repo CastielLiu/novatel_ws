@@ -107,7 +107,10 @@ private:
 	{
 		uint8_t sum = 0;
 		for(size_t i=0; i<len; ++i)
+		{
 			sum += buf[i];
+			//cout << hex << int(buf[i]) << " ";
+		}
 		return ~sum +1;
 	}
 	

@@ -1,6 +1,8 @@
-uint8 navigation_system
-uint8 satellite_num
-uint8 satellite_frequency
+
+uint8 num
+uint8 system
+uint8 flags1
+uint8 flags2
 uint8 elevation
 uint16 azimuth
-uint8 snr
+uint8[3] frequency

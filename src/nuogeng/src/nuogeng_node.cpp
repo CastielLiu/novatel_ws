@@ -10,7 +10,8 @@ Nuogeng::Nuogeng():
 Nuogeng::~Nuogeng()
 {
 	this->closeSerial();
-	
+	if(m_pkg_buffer!=NULL)
+		delete [] m_pkg_buffer;
 }
 
 bool Nuogeng::openSerial(const std::string& port,int baudrate)
@@ -154,7 +155,7 @@ void Nuogeng::parseIncomingData(uint8_t* buffer,size_t len)
 			if(20==m_pkg_buffer[1]) //ID
 				parseId20Pkg(m_pkg_buffer);
 			else if(31 == m_pkg_buffer[1])
-				parseId31Pkg(m_pkg_buffer);
+				;//parseId31Pkg(m_pkg_buffer);
 		}
 	}
 }
@@ -181,7 +182,7 @@ void Nuogeng::parseId20Pkg(const uint8_t* buffer)
 	m_pub_id20.publish(m_inspax);
 }
 
-
+/*
 void Nuogeng::parseId31Pkg(const uint8_t* buffer)
 {
 	int satellite_count = buffer[2]/7; //pkglen/7
@@ -207,7 +208,7 @@ void Nuogeng::parseId31Pkg(const uint8_t* buffer)
 	}
 	m_pub_id31.publish(satellites);
 }
-
+*/
 
 void Nuogeng::stopReading()
 {

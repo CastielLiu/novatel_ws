@@ -52,9 +52,9 @@ public:
 		for(auto& satellite:mSatellites.satellites)
 		{
 			mOutFileSatellite << setw(6)
-			 				  << int(satellite.navigation_system) << "\t" << int(satellite.satellite_num) << "\t"
-							  << int(satellite.satellite_frequency) << "\t" << int(satellite.elevation) << "\t"
-							  << int(satellite.azimuth) << "\t" << int(satellite.snr) << "\r\n";
+			 				  << int(satellite.system) << "\t" << int(satellite.num) << "\t"
+							  << int(satellite.frequency[0]) <<"\t" << int(satellite.frequency[1]) <<"\t" << int(satellite.frequency[2]) << "\t"
+							  << int(satellite.elevation) << "\t" << int(satellite.azimuth) << "\r\n";
 		}
 		mOutFileSatellite << "--------------------------\r\n";
 		ROS_INFO("%5ld: recording...",++count);
@@ -75,9 +75,9 @@ public:
 		for(auto& satellite:satelliteMSg->satellites)
 		{
 			mOutFileSatellite << setw(6)
-			 				  << int(satellite.navigation_system) << "\t" << int(satellite.satellite_num) << "\t"
-							  << int(satellite.satellite_frequency) << "\t" << int(satellite.elevation) << "\t"
-							  << int(satellite.azimuth) << "\t" << int(satellite.snr) << "\r\n";
+			 				  << int(satellite.system) << "\t" << int(satellite.num) << "\t"
+							  << int(satellite.frequency[0]) <<"\t" << int(satellite.frequency[1]) <<"\t" << int(satellite.frequency[2]) << "\t"
+							  << int(satellite.elevation) << "\t" << int(satellite.azimuth) << "\r\n";
 		}
 		mOutFileSatellite << "--------------------------\r\n";
 		ROS_INFO("%5ld: recording...",++count);
@@ -130,10 +130,9 @@ public:
 		
 			
 		mOutFileInspvax << "stamp\t" << "latitude\t" << "longitude\t" <<"yaw\t" << "height\r\n";
-		mOutFileSatellite << "stamp\t" <<  "navigation_system\t" << "satellite_num\t" << "satellite_frequency\t" << "elevation\t" << "azimuth\t" << "snr\r\n"; 
+		mOutFileSatellite << "stamp\t" <<  "navigation_system\t" << "satellite_num\t" << "satellite_frequency 1 3 3\t" << "elevation\t" << "azimuth\t" << "\r\n"; 
 		return true;
 	}
-
 
 
 private:

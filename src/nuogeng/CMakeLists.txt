@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   serial
   std_msgs
   gps_msgs
+  message_filters
 )
 
 ## System dependencies are found with CMake's conventions
@@ -119,7 +120,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
  include
-  ${catkin_INCLUDE_DIRS}
+ ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -142,6 +143,9 @@ target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 add_executable(record_data_node src/record_data.cpp)
 add_dependencies(record_data_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(record_data_node ${catkin_LIBRARIES} )
-target_link_libraries(record_data_node /opt/ros/kinetic/lib/libmessage_filters.so)
+
+add_executable(satellite_node src/satellite_node.cpp)
+add_dependencies(satellite_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(satellite_node ${catkin_LIBRARIES} )
 
 
