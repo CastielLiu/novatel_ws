@@ -112,7 +112,7 @@ public:
 		string file_name2 = nh_private.param<string>("gps_file", "gps.txt");
 		
 		mOutFileSatellite.open(file_name1);
-		if(!mOutFileSatellite.is_open())
+		if(!mOutFileSatellite.is_open()) 
 		{
 			ROS_ERROR("open %s failed!!!",file_name1.c_str());
 			return false;
