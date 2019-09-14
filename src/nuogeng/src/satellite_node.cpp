@@ -6,6 +6,7 @@
 #include"gps_msgs/Inspvax.h"
 #include"gps_msgs/Satellite.h"
 #include"gps_msgs/Satellites.h"
+#include <arpa/inet.h>
 
 using namespace std;
 
@@ -243,7 +244,7 @@ void Satellite::processAllDetailedSVInfo(const uint8_t* buffer, int len)
 		satellite.flags1 = svInfo->flags1;
 		satellite.flags2 = svInfo->flags2;
 		satellite.elevation = svInfo->elevation;
-		satellite.azimuth = svInfo->azimuth;
+		satellite.azimuth = htons(svInfo->azimuth);
 		satellite.frequency[0] = svInfo->frequency[0];
 		satellite.frequency[1] = svInfo->frequency[1];
 		satellite.frequency[2] = svInfo->frequency[2];
