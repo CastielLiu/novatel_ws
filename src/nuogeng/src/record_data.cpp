@@ -70,6 +70,7 @@ public:
 						<< gpsMsg->latitude << "\t" << gpsMsg->longitude << "\t"
 						<< setprecision(2)
 						<< gpsMsg->azimuth << "\t" << gpsMsg->height <<"\r\n";
+		mOutFileInspvax.flush();
 		
 		mOutFileSatellite << fixed << setprecision(3) << satellite_time  << "\r\n";
 		for(auto& satellite:satelliteMSg->satellites)
@@ -80,6 +81,7 @@ public:
 							  << int(satellite.elevation) << "\t" << int(satellite.azimuth) << "\r\n";
 		}
 		mOutFileSatellite << "--------------------------\r\n";
+		mOutFileSatellite.flush();
 		ROS_INFO("%5ld: recording...",++count);
 	
 	}

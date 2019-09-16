@@ -220,7 +220,7 @@ void Satellite::parsePackage(const uint8_t* buffer)
 	int record_len = buffer[1];
 	
 	ROS_INFO("type = %x",record_type);
-	if(record_type = 0x22)
+	if(record_type == 0x22)
 		processAllDetailedSVInfo(buffer+2, record_len);
 	
 }
