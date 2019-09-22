@@ -513,7 +513,7 @@ public:
   
   void RawImuShortHandler(RawImuShort &raw_imu, double &timestamp) 
   {
-	  sensor_msgs::Imu raw_imu_msg;
+	sensor_msgs::Imu raw_imu_msg;
   	raw_imu_msg.header.stamp = ros::Time::now();
   	raw_imu_msg.header.frame_id = "imu";
   	raw_imu_msg.angular_velocity.x = raw_imu.x_gyro_rate* 0.008/65536;

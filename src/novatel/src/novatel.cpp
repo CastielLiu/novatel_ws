@@ -53,6 +53,20 @@ unsigned long CalculateBlockCRC32 ( unsigned long ulCount, /* Number of bytes in
   return( ulCRC );
 }
 
+unsigned long Novatel::CalculateBlockCRC32ByTable ( unsigned long ulCount, /* Number of bytes in the data block */
+											const unsigned char *ucBuffer, /* Data block */
+											const uint32_t* table)
+{
+	unsigned long ulTemp1, ulTemp2, ulCRC = 0;
+	while ( ulCount-- != 0 ) 
+	{
+		ulTemp1 = ( ulCRC >> 8 ) & 0x00FFFFFFL;
+		ulTemp2 = table[((int) ulCRC ^ *ucBuffer++ ) & 0xff];
+		ulCRC = ulTemp1 ^ ulTemp2;
+	}
+	return ulCRC ;
+}
+
 
 /*!
  * Default callback method for timestamping data.  Used if a
@@ -1204,7 +1218,8 @@ void Novatel::BufferIncomingData(unsigned char *message, unsigned int length)
 			data_buffer_[buffer_index_++] = message[ii];
 			// BINARY_LOG_TYPE message_id = (BINARY_LOG_TYPE) (((data_buffer_[5]) << 8) + data_buffer_[4]);
 			// log_info_("Sending to ParseBinary");
-			ParseBinary(data_buffer_, buffer_index_, message_id_);
+			if(CalculateBlockCRC32ByTable(buffer_index_-4,data_buffer_)==*(uint32_t*)(data_buffer_+buffer_index_-4))
+				ParseBinary(data_buffer_, buffer_index_, message_id_);
 			// reset counters
 			buffer_index_ = 0;
 			bytes_remaining_ = 0;
