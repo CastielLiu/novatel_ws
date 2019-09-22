@@ -497,17 +497,19 @@ public:
 	
   }
   void CorrImuShortHandler(CorrImuShort &corr_imu,double &timestamp)
-  {  
+  {
+  	static int log_frequency = nh_.param<int>("log_corrimu_frequency",0);
+  	
   	sensor_msgs::Imu corr_imu_msg;
   	corr_imu_msg.header.stamp = ros::Time::now();
   	corr_imu_msg.header.frame_id = "imu";
-  	corr_imu_msg.angular_velocity.x = corr_imu.pitch_rate *100;
-  	corr_imu_msg.angular_velocity.y = corr_imu.roll_rate *100;
-  	corr_imu_msg.angular_velocity.z = corr_imu.yaw_rate *100;
+  	corr_imu_msg.angular_velocity.x = corr_imu.pitch_rate *log_frequency;
+  	corr_imu_msg.angular_velocity.y = corr_imu.roll_rate *log_frequency;
+  	corr_imu_msg.angular_velocity.z = corr_imu.yaw_rate *log_frequency;
   	
-  	corr_imu_msg.linear_acceleration.x = corr_imu.lateral_acc *100;
-  	corr_imu_msg.linear_acceleration.y = corr_imu.longitudinal_acc *100;
-  	corr_imu_msg.linear_acceleration.z = corr_imu.verticle_acc *100;
+  	corr_imu_msg.linear_acceleration.x = corr_imu.lateral_acc *log_frequency;
+  	corr_imu_msg.linear_acceleration.y = corr_imu.longitudinal_acc *log_frequency;
+  	corr_imu_msg.linear_acceleration.z = corr_imu.verticle_acc *log_frequency;
   	corrImus_publisher_.publish(corr_imu_msg);
   }
   
