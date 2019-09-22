@@ -19,7 +19,7 @@
 //开启LAND_PLUS功能，失锁情况的长时间精度保持
 # SETINSROTATION RBV X Y Z [XSTD] [YSTD] [ZSTD]
 3. SETINSROTATION RBV 0 0 0
-//由IMU坐标系旋转到载体坐标系的旋转角度，按照Z、X、Y顺序依据右手定制依次旋转，绕X轴旋转角度值填写到X上，绕Y轴旋转角度值填写到Y上，绕Z轴旋转角度值填写到Z上，[XSTD] [YSTD] [ZSTD]为旋转后与对应的载体坐标轴之间的角度偏差值。
+//由IMU坐标系旋转到载体坐标系的旋转角度(degrees)，按照Z、X、Y顺序依据右手定制依次旋转，绕X轴旋转角度值填写到X上，绕Y轴旋转角度值填写到Y上，绕Z轴旋转角度值填写到Z上，[XSTD] [YSTD] [ZSTD]为旋转后与对应的载体坐标轴之间的角度偏差值。
 # SETINSTRANSLATION ANT1 X Y Z [XSTD] [YSTD] [ZSTD]
 4. SETINSTRANSLATION ANT1 0 0 0.8
 // X、Y、Z分别表示IMU中心到ANT1天线相位中心在IMU的X、Y、Z三个轴向上的距离，有正负之分，单位是m，[XSTD] [YSTD] [ZSTD]为在IMU的X、Y、Z三个轴向上的估计偏差值。
@@ -28,7 +28,7 @@
 // X、Y、Z分别表示IMU中心到ANT2天线相位中心在IMU的X、Y、Z三个轴向上的距离，有正负之分，单位是m，[XSTD] [YSTD] [ZSTD]为在IMU的X、Y、Z三个轴向上的估计偏差值。
 6. ALIGNMENTMODE AIDED_TRANSFER
 //对准方式为双天线对准
-7. SAVECONFIG             
+7. SAVECONFIG
 //保存
 
 
