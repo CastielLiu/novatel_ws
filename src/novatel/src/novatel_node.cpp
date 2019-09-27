@@ -472,6 +472,11 @@ public:
     // ROS_INFO_STREAM("RAW RANGE MSG\n\tsizeof: " << sizeof(msg));
   }
   
+  double deg2rad(const double& deg)
+  {
+     return deg*M_PI/180.0;
+  }
+  
   void InspvaxHandler(Inspvax &inspvax,double timestamp)
   {
 	gps_msgs::Inspvax inspvax_msg;
@@ -517,9 +522,9 @@ public:
 		ll2utm_msg.pose.pose.position.y = utm.northing;
 		ll2utm_msg.pose.pose.position.z = utm.altitude;
 		
-		Eigen::AngleAxisd rollAngle(inspvax_msg.roll, Eigen::Vector3d::UnitY());
-		Eigen::AngleAxisd yawAngle(inspvax_msg.azimuth, Eigen::Vector3d::UnitZ());
-		Eigen::AngleAxisd pitchAngle(inspvax_msg.pitch, Eigen::Vector3d::UnitX());
+		Eigen::AngleAxisd rollAngle(deg2rad(inspvax_msg.roll), Eigen::Vector3d::UnitX());
+		Eigen::AngleAxisd yawAngle(-deg2rad(inspvax_msg.azimuth), Eigen::Vector3d::UnitZ());
+		Eigen::AngleAxisd pitchAngle(deg2rad(inspvax_msg.pitch), Eigen::Vector3d::UnitX());
 		Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
 		
 		ll2utm_msg.pose.pose.orientation.x = q.x();
