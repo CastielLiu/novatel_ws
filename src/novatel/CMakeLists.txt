@@ -7,6 +7,7 @@ project(novatel)
 #######################################
 
 option(BUILD_WITH_ROS "Build ROS node and use catkin." ON)
+#add_compile_options(-std=c++11)
 
 if (NOT catkin_FOUND)
    SET(BUILD_WITH_ROS OFF)
@@ -17,7 +18,7 @@ if (BUILD_WITH_ROS)
 	## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 	## is used, also find other catkin packages
 	## libraries found here are added to catkin_LIBRARIES and linked automatically
-	find_package(catkin COMPONENTS serial roslib roscpp rosconsole tf gps_msgs nav_msgs sensor_msgs)
+	find_package(catkin COMPONENTS serial roslib roscpp rosconsole tf gps_msgs nav_msgs sensor_msgs geographic_msgs geodesy)
 	
   ## LIBRARIES: libraries you create in this project that dependent projects also need
 	## CATKIN_DEPENDS: catkin_packages dependent projects also need
@@ -39,7 +40,18 @@ else()
 endif (BUILD_WITH_ROS)
 
 # System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+find_package(Boost REQUIRED COMPONENTS 
+	system 
+	filesystem 
+	thread
+)
+
+#Eigen
+find_package(cmake_modules REQUIRED)
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+add_definitions(${EIGEN_DEFINITIONS})
+
 
 ###########
 ## Build ##

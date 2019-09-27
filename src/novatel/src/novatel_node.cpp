@@ -49,6 +49,10 @@
 
 #include <boost/tokenizer.hpp>
 #include <boost/thread/thread.hpp>
+#include <geodesy/utm.h>
+#include <geodesy/wgs84.h>
+#include <geographic_msgs/GeoPoint.h>
+#include <Eigen/Dense>
 
 #include "novatel/novatel.h"
 using namespace novatel;
@@ -194,7 +198,7 @@ public:
       }
     }
 
-    odom_publisher_.publish(cur_odom_);
+    bestutm_publisher_.publish(cur_odom_);
   }
 
 
@@ -284,7 +288,7 @@ public:
 
     }
 
-    odom_publisher_.publish(cur_odom_);
+    bestutm_publisher_.publish(cur_odom_);
   }
 
   void InsCovHandler(InsCovariance &cov, double &timestamp) {
@@ -495,6 +499,37 @@ public:
 	
 	inspvax_publisher_.publish(inspvax_msg);
 	
+	if(is_ll2utm_)
+	{
+		static nav_msgs::Odometry ll2utm_msg;
+		ll2utm_msg.header.stamp = inspvax_msg.header.stamp;
+		ll2utm_msg.header.frame_id = "world";
+		
+		geographic_msgs::GeoPoint point;
+		point.latitude = inspvax_msg.latitude;
+		point.longitude = inspvax_msg.longitude;
+		point.altitude = inspvax_msg.height;
+		
+		geodesy::UTMPoint utm;
+		geodesy::fromMsg(point, utm);
+		
+		ll2utm_msg.pose.pose.position.x = utm.easting;
+		ll2utm_msg.pose.pose.position.y = utm.northing;
+		ll2utm_msg.pose.pose.position.z = utm.altitude;
+		
+		Eigen::AngleAxisd rollAngle(inspvax_msg.roll, Eigen::Vector3d::UnitY());
+		Eigen::AngleAxisd yawAngle(inspvax_msg.azimuth, Eigen::Vector3d::UnitZ());
+		Eigen::AngleAxisd pitchAngle(inspvax_msg.pitch, Eigen::Vector3d::UnitX());
+		Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+		
+		ll2utm_msg.pose.pose.orientation.x = q.x();
+		ll2utm_msg.pose.pose.orientation.y = q.y();
+		ll2utm_msg.pose.pose.orientation.z = q.z();
+		ll2utm_msg.pose.pose.orientation.w = q.w();
+		
+		inspvax_publisher_.publish(ll2utm_msg);
+	}
+	
   }
   void CorrImuShortHandler(CorrImuShort &corr_imu,double &timestamp)
   {
@@ -537,8 +572,9 @@ public:
 
     if (!this->getParameters())
       return;
-
-    this->odom_publisher_ = nh_.advertise<nav_msgs::Odometry>(odom_topic_,0);
+	
+	this->ll2utm_publisher_ =  nh_.advertise<nav_msgs::Odometry>(ll2utm_topic_,0);
+    this->bestutm_publisher_ = nh_.advertise<nav_msgs::Odometry>(bestutm_topic_,0);
     this->nav_sat_fix_publisher_ = nh_.advertise<sensor_msgs::NavSatFix>(nav_sat_fix_topic_,0);
     // ! FIXME - only advertise ephem/range if going to publish it.
     this->ephemeris_publisher_ = nh_.advertise<gps_msgs::Ephemeris>(ephemeris_topic_,0);
@@ -652,8 +688,8 @@ protected:
 
     name_ = ros::this_node::getName();
 
-    nh_.param("odom_topic", odom_topic_, std::string("/gps_odom"));
-    ROS_INFO_STREAM(name_ << ": Odom Topic: " << odom_topic_);
+    nh_.param("bestutm_topic", bestutm_topic_, std::string("/best_utm"));
+    ROS_INFO_STREAM(name_ << ": Odom Topic: " << bestutm_topic_);
 
     nh_.param("nav_sat_fix_topic", nav_sat_fix_topic_, std::string("/gps_fix"));
     ROS_INFO_STREAM(name_ << ": NavSatFix Topic: " << nav_sat_fix_topic_);
@@ -677,7 +713,7 @@ protected:
     nh_.param("configure_port", configure_port_, std::string(""));
     ROS_INFO_STREAM(name_ << ": Configure port: " << configure_port_);
 
-    nh_.param("gps_default_logs_period", gps_default_logs_period_, 0.05);
+    nh_.param("gps_default_logs_period", gps_default_logs_period_, 0.0);
     ROS_INFO_STREAM(name_ << ": Default GPS logs period: " << gps_default_logs_period_);
 
     nh_.param("span_default_logs_period", span_default_logs_period_, 0.0);
@@ -710,6 +746,8 @@ protected:
 	nh_.param("raw_imu_topic",raw_imu_topic_,std::string("/raw_imu"));
 	ROS_INFO_STREAM(name_ << ": GPS rawImu Topic: " << raw_imu_topic_);
 	
+	is_ll2utm_ = nh_.param<bool>("is_lltoutm",false);
+	ll2utm_topic_ = nh_.param<std::string>("ll2utm_topic","ll2utm_odom");
 	
     return true;
   }
@@ -719,7 +757,8 @@ protected:
   ////////////////////////////////////////////////////////////////
   ros::NodeHandle nh_;
   std::string name_;
-  ros::Publisher odom_publisher_;
+  ros::Publisher ll2utm_publisher_;
+  ros::Publisher bestutm_publisher_;
   ros::Publisher nav_sat_fix_publisher_;
   ros::Publisher ephemeris_publisher_;
   ros::Publisher dual_band_range_publisher_;
@@ -732,7 +771,8 @@ protected:
   Novatel gps_; //
 
   // topics - why are we not using remap arguments?
-  std::string odom_topic_;
+  std::string bestutm_topic_;
+  std::string ll2utm_topic_;
   std::string nav_sat_fix_topic_;
   std::string ephemeris_topic_;
   std::string dual_band_range_topic_;
@@ -760,6 +800,8 @@ protected:
   InsCovariance cur_ins_cov_;
   Position cur_psrpos_;
   UtmPosition cur_utm_bestpos_;
+  
+  bool is_ll2utm_;
 
   // holders for data common to multiple messages
   // double cur_psr_lla_[3];
