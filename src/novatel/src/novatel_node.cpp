@@ -527,7 +527,7 @@ public:
 		ll2utm_msg.pose.pose.orientation.z = q.z();
 		ll2utm_msg.pose.pose.orientation.w = q.w();
 		
-		inspvax_publisher_.publish(ll2utm_msg);
+		ll2utm_publisher_.publish(ll2utm_msg);
 	}
 	
   }
