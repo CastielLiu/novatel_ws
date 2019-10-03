@@ -531,7 +531,6 @@ public:
 		ll2utm_msg.pose.pose.orientation.y = q.y();
 		ll2utm_msg.pose.pose.orientation.z = q.z();
 		ll2utm_msg.pose.pose.orientation.w = q.w();
-		
 		ll2utm_msg.pose.covariance[0] = inspvax_msg.azimuth *M_PI / 180.0;
 		
 		ll2utm_publisher_.publish(ll2utm_msg);
