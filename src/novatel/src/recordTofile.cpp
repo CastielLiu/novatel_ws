@@ -2,6 +2,9 @@
 #include<gps_msgs/Inspvax.h>
 #include<fstream>
 #include<iomanip>
+#include <geodesy/utm.h>
+#include <geodesy/wgs84.h>
+#include <geographic_msgs/GeoPoint.h>
 
 using namespace std;
 
@@ -20,10 +23,24 @@ public:
 	}
 	void callback(const gps_msgs::Inspvax::ConstPtr & msg)
 	{
-		out_file.setf(ios::fixed);
-	//	out_file <<setprecision(8) << msg->latitude <<"," << msg->longitude<<"," 
-	//			 << setprecision(2) << msg->azimuth << "\r" << endl;
-		out_file <<setprecision(8) << msg->latitude <<"," << msg->longitude<< "\r" << endl;
+		double time = msg->header.stamp.toSec();
+		geographic_msgs::GeoPoint point;
+		point.latitude = msg->latitude;
+		point.longitude = msg->longitude;
+		point.altitude = msg->height;
+		
+		geodesy::UTMPoint utm;
+		geodesy::fromMsg(point, utm);
+	
+		out_file << fixed << setprecision(3) << time << "\t" 
+				 << setprecision(7)
+				 << msg->latitude << "\t" << msg->longitude << "\t"
+				 << setprecision(3)
+				 << msg->azimuth << "\t"
+				 << utm.easting << "\t" 
+				 << utm.northing << "\t" 
+				 << utm.altitude <<"\r\n";
+						
 	}
 	
 private:
