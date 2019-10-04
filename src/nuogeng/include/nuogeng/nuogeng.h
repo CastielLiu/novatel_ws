@@ -2,10 +2,12 @@
 #define NUOGENG_H_
 #include<iostream>
 #include<ros/ros.h>
+#include<cmath>
 #include<serial/serial.h>
 #include<boost/thread.hpp>
 #include<boost/bind.hpp>
 #include"gps_msgs/Inspvax.h"
+#include<nav_msgs/Odometry.h>
 #include"gps_msgs/Satellite.h"
 #include"gps_msgs/Satellites.h"
 using namespace std;
@@ -83,7 +85,10 @@ struct pkg31Msgs_t
 	uint8_t snr;
 });
 
-
+double deg2rad(const double& deg)
+{
+	return deg*M_PI/180.0;
+}
 
 class Nuogeng
 {
@@ -125,6 +130,7 @@ private:
 private:
 	ros::Publisher m_pub_id20;
 	ros::Publisher m_pub_id31;
+	ros::Publisher m_pub_ll2utm;
 	
 	serial::Serial *m_serial_port;
 	//! shared pointer to Boost thread for listening for data from novatel
@@ -132,6 +138,11 @@ private:
 	bool m_reading_status;  //!< True if the read thread is running, false otherwise.
 	uint8_t * const m_pkg_buffer;
 	gps_msgs::Inspvax m_inspax;
+	
+	bool m_is_pub_ll2utm;
+	nav_msgs::Odometry m_ll2utmOdom;
+	
+	
 };
 
 

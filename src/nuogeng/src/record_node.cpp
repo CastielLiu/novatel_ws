@@ -5,6 +5,7 @@
 #include<boost/thread.hpp>
 #include<boost/bind.hpp>
 #include"gps_msgs/Inspvax.h"
+#include<nav_msgs/Odometry.h>
 #include"gps_msgs/Satellite.h"
 #include"gps_msgs/Satellites.h"
 #include<message_filters/subscriber.h>
@@ -17,7 +18,7 @@ using namespace std;
 class Recorder
 {
 public:
-	typedef message_filters::sync_policies::ApproximateTime<gps_msgs::Inspvax,gps_msgs::Satellites> MySyncPolicy;
+	typedef message_filters::sync_policies::ApproximateTime<gps_msgs::Inspvax, nav_msgs::Odometry, gps_msgs::Satellites> MySyncPolicy;
 	Recorder(){}
 	~Recorder()
 	{
@@ -60,7 +61,9 @@ public:
 		ROS_INFO("%5ld: recording...",++count);
 	}
 	
-	void record_callback(const gps_msgs::Inspvax::ConstPtr& gpsMsg, const gps_msgs::Satellites::ConstPtr& satelliteMSg)
+	void record_callback(const gps_msgs::Inspvax::ConstPtr& gpsMsg, 
+						 const nav_msgs::Odometry::ConstPtr& odomMsg,
+						 const gps_msgs::Satellites::ConstPtr& satelliteMSg)
 	{
 		double gps_time = gpsMsg->header.stamp.toSec();
 		double satellite_time = satelliteMSg->header.stamp.toSec();
@@ -68,8 +71,12 @@ public:
 		static size_t count = 0;
 		mOutFileInspvax << fixed << setprecision(3) << gps_time << "\t" << setprecision(7)
 						<< gpsMsg->latitude << "\t" << gpsMsg->longitude << "\t"
-						<< setprecision(2)
-						<< gpsMsg->azimuth << "\t" << gpsMsg->height <<"\r\n";
+						<< setprecision(3)
+						<< gpsMsg->azimuth << "\t" 
+						<< odomMsg->pose.pose.position.x << "\t" 
+						<< odomMsg->pose.pose.position.y << "\t" 
+						<< odomMsg->pose.pose.position.z <<"\r\n";
+						
 		mOutFileInspvax.flush();
 		
 		mOutFileSatellite << fixed << setprecision(3) << satellite_time  << "\r\n";
@@ -93,6 +100,7 @@ public:
 		ros::NodeHandle nh_private("~");
 		
 		std::string gps_topic = nh_private.param<string>("gps_topic","/gps");
+		std::string odom_topic = nh_private.param<string>("odom_topic","/odom");
 		std::string satellite_topic = nh_private.param<string>("satellite_topic","/satellite");
 		
 		bool use_synchronizer = nh_private.param<bool>("use_synchronizer",true);
@@ -106,8 +114,9 @@ public:
 		{
 			mSubGpsPtr.reset(new message_filters::Subscriber<gps_msgs::Inspvax>(nh,gps_topic,50));
 			mSubSatellitePtr.reset(new message_filters::Subscriber<gps_msgs::Satellites>(nh,satellite_topic,1));
-			mSyncPtr.reset(new message_filters::Synchronizer<MySyncPolicy>(MySyncPolicy(50),*mSubGpsPtr,*mSubSatellitePtr));
-			mSyncPtr->registerCallback(boost::bind(&Recorder::record_callback, this, _1, _2));
+			mSubOdomPtr.reset(new message_filters::Subscriber<nav_msgs::Odometry>(nh,odom_topic,1));
+			mSyncPtr.reset(new message_filters::Synchronizer<MySyncPolicy>(MySyncPolicy(50),*mSubGpsPtr, *mSubOdomPtr, *mSubSatellitePtr));
+			mSyncPtr->registerCallback(boost::bind(&Recorder::record_callback, this, _1,_2, _3));
 		}
 		
 		string file_name1 = nh_private.param<string>("satellite_file", "satellite.txt");
@@ -142,6 +151,7 @@ private:
 	ros::Subscriber mSubSatelliteMsg;
 	
 	std::unique_ptr<message_filters::Subscriber<gps_msgs::Inspvax> > mSubGpsPtr;
+	std::unique_ptr<message_filters::Subscriber<nav_msgs::Odometry> > mSubOdomPtr;
 	std::unique_ptr<message_filters::Subscriber<gps_msgs::Satellites> > mSubSatellitePtr;
 	std::unique_ptr<message_filters::Synchronizer<MySyncPolicy> >mSyncPtr;
 	

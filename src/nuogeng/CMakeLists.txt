@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(nuogeng)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -I /usr/include/eigen3)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   gps_msgs
   message_filters
+  geodesy
 )
 
 ## System dependencies are found with CMake's conventions
@@ -140,7 +141,7 @@ add_executable(${PROJECT_NAME}_node src/nuogeng_node.cpp)
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
-add_executable(record_data_node src/record_data.cpp)
+add_executable(record_data_node src/record_node.cpp)
 add_dependencies(record_data_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(record_data_node ${catkin_LIBRARIES} )
 

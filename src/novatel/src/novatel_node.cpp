@@ -524,7 +524,7 @@ public:
 		
 		Eigen::AngleAxisd rollAngle(deg2rad(inspvax_msg.roll), Eigen::Vector3d::UnitX());
 		Eigen::AngleAxisd yawAngle(-deg2rad(inspvax_msg.azimuth-90.0), Eigen::Vector3d::UnitZ());
-		Eigen::AngleAxisd pitchAngle(deg2rad(inspvax_msg.pitch), Eigen::Vector3d::UnitX());
+		Eigen::AngleAxisd pitchAngle(deg2rad(inspvax_msg.pitch), Eigen::Vector3d::UnitY());
 		Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
 		
 		ll2utm_msg.pose.pose.orientation.x = q.x();

@@ -1,5 +1,9 @@
 #include<iostream>
 #include"nuogeng/nuogeng.h"
+#include <geodesy/utm.h>
+#include <geodesy/wgs84.h>
+#include <geographic_msgs/GeoPoint.h>
+#include <Eigen/Dense>
 
 Nuogeng::Nuogeng():
 	m_reading_status(false),
@@ -54,8 +58,11 @@ bool Nuogeng::init(int argc,char** argv)
 	
 	m_pub_id20 = nh.advertise<gps_msgs::Inspvax>(nh_private.param<std::string>("gps_topic","/gps"),1);
 	m_pub_id31 = nh.advertise<gps_msgs::Satellites>(nh_private.param<string>("satellite_topic","/satellite"),1);
+	m_pub_ll2utm = nh.advertise<nav_msgs::Odometry>(nh_private.param<string>("odom_topic","/odom"),1);
+	
 	std::string port_name = nh_private.param<std::string>("port_name","/dev/ttyUSB0");
 	int baudrate = nh_private.param<int>("baudrate",115200);
+	m_is_pub_ll2utm = nh_private.param<bool>("is_ll2utm",false);
 	if(!openSerial(port_name,baudrate))
 		return false;
 	return true;
@@ -180,6 +187,40 @@ void Nuogeng::parseId20Pkg(const uint8_t* buffer)
 	m_inspax.height_standard_deviation = gpsPtr->height_std_deviation;
 	
 	m_pub_id20.publish(m_inspax);
+	
+	if(m_is_pub_ll2utm)
+	{
+		m_ll2utmOdom.header.stamp = m_inspax.header.stamp;
+		m_ll2utmOdom.header.frame_id = "world";
+		
+		geographic_msgs::GeoPoint point;
+		point.latitude = m_inspax.latitude;
+		point.longitude = m_inspax.longitude;
+		point.altitude = m_inspax.height;
+		
+		geodesy::UTMPoint utm;
+		geodesy::fromMsg(point, utm);
+		
+		m_ll2utmOdom.pose.pose.position.x = utm.easting;
+		m_ll2utmOdom.pose.pose.position.y = utm.northing;
+		m_ll2utmOdom.pose.pose.position.z = utm.altitude;
+		
+		
+		Eigen::AngleAxisd rollAngle(deg2rad(m_inspax.roll), Eigen::Vector3d::UnitX());
+		Eigen::AngleAxisd yawAngle(-deg2rad(m_inspax.azimuth-90.0), Eigen::Vector3d::UnitZ());
+		Eigen::AngleAxisd pitchAngle(deg2rad(m_inspax.pitch), Eigen::Vector3d::UnitY());
+		Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+		m_ll2utmOdom.pose.covariance[0] = m_inspax.azimuth *M_PI / 180.0;
+		
+		
+		m_ll2utmOdom.pose.pose.orientation.x = q.x();
+		m_ll2utmOdom.pose.pose.orientation.y = q.y();
+		m_ll2utmOdom.pose.pose.orientation.z = q.z();
+		m_ll2utmOdom.pose.pose.orientation.w = q.w();
+		
+		m_pub_ll2utm.publish(m_ll2utmOdom);
+	}
+	
 }
 
 /*
