@@ -14,7 +14,10 @@ public:
 	RecordTofile()
 	{
 		ros::NodeHandle nh;
-		sub = nh.subscribe("/gps",10,&RecordTofile::callback,this);
+		ros::NodeHandle nh_private("~");
+		string gps_topic = nh_private.param<string>("gps_topic","/gps");
+		
+		sub = nh.subscribe(gps_topic ,10,&RecordTofile::callback,this);
 		out_file.open("gps.txt");
 	}
 	~RecordTofile()

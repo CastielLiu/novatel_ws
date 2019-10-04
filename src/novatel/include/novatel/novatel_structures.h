@@ -648,6 +648,23 @@ struct Inspvax
 });
 
 PACK(
+struct BestGnss
+{
+    Oem4BinaryHeader header;			//!< Message header
+    SolutionStatus solution_status;		//!< Solution status
+    PositionType position_type;			//!< Position type
+    double latitude;
+    double longitude;
+    double height;
+    float undulation;
+    
+    float reserve[10];
+    uint8_t crc[4];
+});
+
+
+
+PACK(
 struct CorrImuShort
 {
 	OEM4ShortBinaryHeader header;

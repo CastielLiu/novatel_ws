@@ -1297,6 +1297,14 @@ void Novatel::ParseBinary(unsigned char *message, size_t length, BINARY_LOG_TYPE
             if (inspvax_callback_)
             	inspvax_callback_(inspvax, read_timestamp_);
             break;
+        case BESTGNSSPOS_LOG_TYPE:
+        	BestGnss best_gnss;
+        	memcpy(&best_gnss, message, sizeof(best_gnss));
+        	if (inspvax_callback_)
+            	inspvax_callback_(inspvax, read_timestamp_);
+            break;
+            
+        	
         case CORRIMUDATAS_LOG_TYPE:
         	CorrImuShort corr_imu;
         	memcpy(&corr_imu,message,sizeof(corr_imu));

@@ -99,6 +99,7 @@ public:
     gps_.set_best_pseudorange_position_callback(boost::bind(&NovatelNode::PsrPosHandler, this, _1, _2));
     
     gps_.set_inspvax_callback(boost::bind(&NovatelNode::InspvaxHandler,this,_1,_2)); //add by wendao
+    gps_.set_bestgnss_callback(boost::bind(&NovatelNode::BestGnssHandler,this,_1,_2)); //add by wendao
     gps_.set_corrImu_short_callback(boost::bind(&NovatelNode::CorrImuShortHandler,this,_1,_2)); //add by wendao
   }
 
@@ -537,6 +538,20 @@ public:
 	}
 	
   }
+  
+  void BestGnssHandler(BestGnss &bestgnss,double timestamp)
+  {
+	gps_msgs::Inspvax gnss_msg;
+	gnss_msg.header.stamp = ros::Time::now();
+	gnss_msg.header.frame_id = "gps";
+	gnss_msg.latitude = bestgnss.latitude;
+	gnss_msg.longitude = bestgnss.longitude;
+	gnss_msg.height = bestgnss.height;
+	
+	bestgnss_publisher_.publish(gnss_msg);
+ }
+	
+  
   void CorrImuShortHandler(CorrImuShort &corr_imu,double &timestamp)
   {
   	static int log_frequency = nh_.param<int>("log_corrimu_frequency",0);
@@ -588,6 +603,7 @@ public:
     this->psrpos_publisher_ = nh_.advertise<sensor_msgs::NavSatFix>(psrpos_topic_,0);
     this->ecefpos_publisher_ = nh_.advertise<nav_msgs::Odometry>(ecefpos_topic_,0);
     this->inspvax_publisher_ = nh_.advertise<gps_msgs::Inspvax>(inspvax_topic_,0); //add by wendao
+    this->bestgnss_publisher_ = nh_.advertise<gps_msgs::Inspvax>(bestgnss_topic_,0); //add by wendao
     this->corrImus_publisher_ = nh_.advertise<sensor_msgs::Imu>(corr_imu_topic_,0); //add by wendao
     this->rawImu_publisher_ = nh_.advertise<sensor_msgs::Imu>(raw_imu_topic_,0);
 
@@ -745,6 +761,9 @@ protected:
 // add by wendao     
     nh_.param("inspvax_topic", inspvax_topic_, std::string("gps_inspvax"));
     ROS_INFO_STREAM(name_ << ": GPS Inspvax Topic: " << inspvax_topic_);
+    
+    nh_.param("bestgnss_topic", bestgnss_topic_, std::string("best_gnss"));
+    ROS_INFO_STREAM(name_ << ": GPS BestGnss Topic: " << bestgnss_topic_);
 
 	nh_.param("corr_imu_topic",corr_imu_topic_,std::string("/corr_imu"));
 	ROS_INFO_STREAM(name_ << ": GPS corrImu Topic: " << corr_imu_topic_);
@@ -771,6 +790,7 @@ protected:
   ros::Publisher psrpos_publisher_;
   ros::Publisher ecefpos_publisher_;
   ros::Publisher inspvax_publisher_;  //add by wendao
+   ros::Publisher bestgnss_publisher_; //add by wendao
   ros::Publisher corrImus_publisher_;  //add by wendao
   ros::Publisher rawImu_publisher_;
 
@@ -785,6 +805,7 @@ protected:
   std::string psrpos_topic_;
   std::string ecefpos_topic_;
   std::string inspvax_topic_; //add by wendao 
+  std::string bestgnss_topic_;
   std::string corr_imu_topic_; //add by wendao
   std::string raw_imu_topic_; 
 

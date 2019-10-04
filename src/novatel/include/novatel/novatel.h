@@ -106,6 +106,7 @@ typedef boost::function<void(Position&, double&)> BestPositionCallback;
 typedef boost::function<void(Position&, double&)> BestPseudorangePositionCallback;
 typedef boost::function<void(Position&, double&)> RtkPositionCallback;
 typedef boost::function<void(Inspvax&,double&)>InspvaxCallback;//add by wendao
+typedef boost::function<void(BestGnss&,double&)>BestGnssCallback;//add by wendao
 typedef boost::function<void(CorrImuShort&,double&)>CorrImuShortCallback;//add by wendao
 
 
@@ -326,6 +327,9 @@ public:
    //add by wendao   
     void set_inspvax_callback(InspvaxCallback handler){
         inspvax_callback_=handler;};
+    void set_bestgnss_callback(BestGnssCallback handler){
+        bestgnss_callback_=handler;};
+        
     void set_corrImu_short_callback(CorrImuShortCallback handler){
     	corrImu_short_callback_=handler;}
            
@@ -475,6 +479,7 @@ private:
     InsPositionVelocityAttitudeShortCallback ins_position_velocity_attitude_short_callback_;
     
     InspvaxCallback inspvax_callback_; //add by wendao
+    BestGnssCallback bestgnss_callback_;
     CorrImuShortCallback corrImu_short_callback_; //add by wendao
     
     VehicleBodyRotationCallback vehicle_body_rotation_callback_;
