@@ -1300,8 +1300,8 @@ void Novatel::ParseBinary(unsigned char *message, size_t length, BINARY_LOG_TYPE
         case BESTGNSSPOS_LOG_TYPE:
         	BestGnss best_gnss;
         	memcpy(&best_gnss, message, sizeof(best_gnss));
-        	if (inspvax_callback_)
-            	inspvax_callback_(inspvax, read_timestamp_);
+        	if (bestgnss_callback_)
+            	bestgnss_callback_(best_gnss, read_timestamp_);
             break;
             
         	

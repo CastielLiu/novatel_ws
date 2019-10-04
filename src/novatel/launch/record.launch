@@ -13,14 +13,12 @@
 		<param name="bestgnss_topic" value = "/best_gnss" />
 		
 		
-		<param name="is_lltoutm"   value="true"/>
-		<param name="ll2utm_topic" value="/ll2utm_odom"/>
-		
-		<param name="log_commands" value="bestgnssposb ontime 0.05; bestutmb ontime 0.05" />
+		<param name="log_commands" value="bestgnssposb ontime 1" />
 	</node>
 	
 	<node pkg="novatel" type="recordTofile_node" name="recordTofile_node" output="screen" >
 		<param name="gps_topic" value="/best_gnss"/>
+		<param name="file_name" value="$(find novatel)/data/gps.txt" />
 	</node>
 	
 </launch>

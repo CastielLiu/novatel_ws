@@ -16,9 +16,10 @@ public:
 		ros::NodeHandle nh;
 		ros::NodeHandle nh_private("~");
 		string gps_topic = nh_private.param<string>("gps_topic","/gps");
-		
+		string file_name = nh_private.param<string>("file_name","gps.txt");
 		sub = nh.subscribe(gps_topic ,10,&RecordTofile::callback,this);
-		out_file.open("gps.txt");
+		out_file.open(file_name.c_str());
+		cout << "open " << file_name << " ok..................." << endl;
 	}
 	~RecordTofile()
 	{
@@ -36,6 +37,14 @@ public:
 		geodesy::fromMsg(point, utm);
 	
 		out_file << fixed << setprecision(3) << time << "\t" 
+				 << setprecision(7)
+				 << msg->latitude << "\t" << msg->longitude << "\t"
+				 << setprecision(3)
+				 << msg->azimuth << "\t"
+				 << utm.easting << "\t" 
+				 << utm.northing << "\t" 
+				 << utm.altitude <<"\r\n";
+		cout << fixed << setprecision(3) << time << "\t" 
 				 << setprecision(7)
 				 << msg->latitude << "\t" << msg->longitude << "\t"
 				 << setprecision(3)
