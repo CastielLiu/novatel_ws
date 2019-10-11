@@ -473,7 +473,7 @@ public:
     // ROS_INFO_STREAM("RAW RANGE MSG\n\tsizeof: " << sizeof(msg));
   }
   
-  double deg2rad(const double& deg)
+  inline double deg2rad(const double& deg)
   {
      return deg*M_PI/180.0;
   }
@@ -532,8 +532,10 @@ public:
 		ll2utm_msg.pose.pose.orientation.y = q.y();
 		ll2utm_msg.pose.pose.orientation.z = q.z();
 		ll2utm_msg.pose.pose.orientation.w = q.w();
-		ll2utm_msg.pose.covariance[0] = inspvax_msg.azimuth *M_PI / 180.0;
-		
+		ll2utm_msg.pose.covariance[0] = deg2rad(inspvax_msg.azimuth);
+		ll2utm_msg.pose.covariance[1] = inspvax_msg.longitude;
+		ll2utm_msg.pose.covariance[2] = inspvax_msg.latitude;
+
 		ll2utm_publisher_.publish(ll2utm_msg);
 	}
 	

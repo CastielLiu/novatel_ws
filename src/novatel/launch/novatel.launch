@@ -1,8 +1,5 @@
 <!-- -->
 <launch>
-	<!-- This is the node written by David Hodo for use with AUXOS.
-					for more up-to date roslaunching, see novatel_for_psr.launch
-	 -->
 	<!-- Start the novatel node -->
 	<node pkg="novatel" type="novatel_node" name="novatel_node" output="screen"  required="true">
 		<param name="port" value="/dev/ttyS1" />
