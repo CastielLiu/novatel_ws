@@ -1,4 +1,4 @@
-<?xml version=1.0?>
+<?xml version="1.0"?>
 
 <!-- wang fa an -->
 <launch>
@@ -12,7 +12,7 @@
 		<param name="port_name" value="/dev/ttyUSB1"/>
 	</node>
 	
-	<node name="record_data_node" pkg="nuogeng" type="record_data_node" output="screen">
+	<node name="record_gps_satellite" pkg="nuogeng" type="record_gps_satellite" output="screen">
 		<param name="odom_topic" value="/odom"/>
 		<param name="use_synchronizer" value="True"/>
 		<param name="record_duration" value="1.0"/>  <!-- s -->
