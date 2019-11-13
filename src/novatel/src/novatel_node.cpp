@@ -519,8 +519,13 @@ public:
 		geodesy::UTMPoint utm;
 		geodesy::fromMsg(point, utm);
 		
-		ll2utm_msg.pose.pose.position.x = utm.easting;
-		ll2utm_msg.pose.pose.position.y = utm.northing;
+		float radYaw = deg2rad(inspvax_msg.azimuth);
+		
+		float delta_x =  x_offset_ * cos(radYaw);
+		float delta_y = -x_offset_ * sin(radYaw);
+		
+		ll2utm_msg.pose.pose.position.x = utm.easting + delta_x;
+		ll2utm_msg.pose.pose.position.y = utm.northing + delta_y;
 		ll2utm_msg.pose.pose.position.z = utm.altitude;
 		
 		Eigen::AngleAxisd rollAngle(deg2rad(inspvax_msg.roll), Eigen::Vector3d::UnitX());
@@ -775,6 +780,7 @@ protected:
 	
 	is_ll2utm_ = nh_.param<bool>("is_lltoutm",false);
 	ll2utm_topic_ = nh_.param<std::string>("ll2utm_topic","ll2utm_odom");
+	x_offset_ = nh_.param<float>("x_offset",0.0);
 	
     return true;
   }
@@ -831,6 +837,7 @@ protected:
   UtmPosition cur_utm_bestpos_;
   
   bool is_ll2utm_;
+  float x_offset_;
 
   // holders for data common to multiple messages
   // double cur_psr_lla_[3];
