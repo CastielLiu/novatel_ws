@@ -1,7 +1,7 @@
 1. FRESET 
 //恢复出厂设置，清除所有配置信息。
 2. INTERFACEMODE COM3 AUTO NOVATEL OFF 
-//以COM2口为例，指定COM3口为RTK差分接收口，并配置该口的收发模式为AUTO，可以接收任意格式的差分改正数。可以根据实际需求指定COMx为差分接收口。
+//以COM3口为例，指定COM3口为RTK差分接收口，并配置该口的收发模式为AUTO，可以接收任意格式的差分改正数。可以根据实际需求指定COMx为差分接收口。
 # the defaut baudrate is 9600
 # so we should config the suitable baudrate 
 3. SERIALCONFIG COM1 115200 N 8 1 N OFF 
@@ -21,10 +21,10 @@
 3. SETINSROTATION RBV 0 0 0
 //由IMU坐标系旋转到载体坐标系的旋转角度(degrees)，按照Z、X、Y顺序依据右手定制依次旋转，绕X轴旋转角度值填写到X上，绕Y轴旋转角度值填写到Y上，绕Z轴旋转角度值填写到Z上，[XSTD] [YSTD] [ZSTD]为旋转后与对应的载体坐标轴之间的角度偏差值。
 # SETINSTRANSLATION ANT1 X Y Z [XSTD] [YSTD] [ZSTD]
-4. SETINSTRANSLATION ANT1 0 0 0.8
+4. SETINSTRANSLATION ANT1 0 1.1 0.8 
 // X、Y、Z分别表示IMU中心到ANT1天线相位中心在IMU的X、Y、Z三个轴向上的距离，有正负之分，单位是m，[XSTD] [YSTD] [ZSTD]为在IMU的X、Y、Z三个轴向上的估计偏差值。
 #SETINSTRANSLATION ANT2 X Y Z [XSTD] [YSTD] [ZSTD]
-5. SETINSTRANSLATION ANT2 0 1.1 0.8
+5. SETINSTRANSLATION ANT2 0 0 0.8
 // X、Y、Z分别表示IMU中心到ANT2天线相位中心在IMU的X、Y、Z三个轴向上的距离，有正负之分，单位是m，[XSTD] [YSTD] [ZSTD]为在IMU的X、Y、Z三个轴向上的估计偏差值。
 6. ALIGNMENTMODE AIDED_TRANSFER
 //对准方式为双天线对准
