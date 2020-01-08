@@ -57,7 +57,7 @@ bool Nuogeng::init(int argc,char** argv)
 	ros::NodeHandle nh_private("~");
 	
 	m_pub_id20 = nh.advertise<gps_msgs::Inspvax>(nh_private.param<std::string>("gps_topic","/gps"),1);
-	m_pub_id31 = nh.advertise<gps_msgs::Satellites>(nh_private.param<string>("satellite_topic","/satellite"),1);
+	//m_pub_id31 = nh.advertise<gps_msgs::Satellites>(nh_private.param<string>("satellite_topic","/satellite"),1);
 	m_pub_ll2utm = nh.advertise<nav_msgs::Odometry>(nh_private.param<string>("odom_topic","/odom"),1);
 	
 	std::string port_name = nh_private.param<std::string>("port_name","/dev/ttyUSB0");
